@@ -1,0 +1,21 @@
+rocket_interceptor/**
+!rocket_interceptor/network/**
+!rocket_interceptor/rocket-interceptor
+!rocket_interceptor/rocket-interceptor.exe
+
+
+# Ignore config and logs directory, instead mount it at runtime.
+config/
+logs/
+
+# Ignore dev/temp files.
+docs/
+tests/
+.ci_config/
+.github/
+.gitlab/
+.mypy_cache/
+.ropeproject/
+.ruff_cache/
+.tox/
+.venv/

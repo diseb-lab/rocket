@@ -1,3 +1,5 @@
+prefix: "0fx"
+
 # The following options define the port numbers to start incrementing from.
 # E.g. for a network of 3 validator nodes, and a base_port_peer of 60000,
 # the resulting peer ports exposed on the network would be:
@@ -63,12 +65,12 @@ transactions:
 
   # Regular transactions are performed a set amount of time after the network has started.
   regular:
-    - peer_id: 0  # The node to submit the transaction to
+    - peer_id: 0 # The node to submit the transaction to
       amount: 80000000000 # Amount in XRP drops, minimum is 1.000.000.000.
       sender_account: "Account1" # Account alias to send the transaction from.
       destination_account: "Account2" # Account alias to send the transaction to.
       time: 2 # Seconds after which the transaction is performed.
-    - peer_id: 1  # The node to submit the transaction to
+    - peer_id: 1 # The node to submit the transaction to
       amount: 81000000000 # Amount in XRP drops, minimum is 1.000.000.000.
       sender_account: "Account1" # Account alias to send the transaction from.
       destination_account: "Account3" # Account alias to send the transaction to.

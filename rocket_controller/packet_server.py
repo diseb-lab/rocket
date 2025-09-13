@@ -11,7 +11,7 @@ from protos import packet_pb2, packet_pb2_grpc
 from protos.packet_pb2 import Packet
 from rocket_controller.csv_logger import ActionLogger
 from rocket_controller.encoder_decoder import PacketEncoderDecoder
-from rocket_controller.helper import format_datetime, validate_ports_or_ids
+from rocket_controller.helper import validate_ports_or_ids
 from rocket_controller.strategies.strategy import Strategy
 from rocket_controller.validator_node_info import (
     SocketAddress,
@@ -83,7 +83,7 @@ class PacketService(packet_pb2_grpc.PacketServiceServicer):
             original_data=original_packet_decoded[0].__str__().replace("\n", "; "),
             possibly_mutated_data=new_packet_decoded[0].__str__().replace("\n", "; "),
             custom_timestamp=timestamp,
-            sent_timestamp=int(datetime.datetime.now().timestamp() * 1000)
+            sent_timestamp=int(datetime.datetime.now().timestamp() * 1000),
         )
 
         return packet_pb2.PacketAck(
@@ -109,6 +109,7 @@ class PacketService(packet_pb2_grpc.PacketServiceServicer):
         for request in request_iterator:
             validator_node_list.append(
                 ValidatorNode(
+                    name=request.name,
                     peer=SocketAddress(
                         host=HOST,
                         port=request.peer_port,
@@ -164,6 +165,7 @@ class PacketService(packet_pb2_grpc.PacketServiceServicer):
         config = self.strategy.network.network_config
 
         config_values_types = {
+            "prefix": str,
             "network_partition": List[List[int]],
             "base_port_peer": int,
             "base_port_ws": int,
@@ -196,6 +198,7 @@ class PacketService(packet_pb2_grpc.PacketServiceServicer):
         )
 
         return packet_pb2.Config(
+            prefix=config.get("prefix"),
             base_port_peer=config.get("base_port_peer"),
             base_port_ws=config.get("base_port_ws"),
             base_port_ws_admin=config.get("base_port_ws_admin"),

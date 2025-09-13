@@ -18,7 +18,6 @@ from rocket_controller.encoder_decoder import (
     PacketEncoderDecoder,
 )
 from rocket_controller.helper import MAX_U32
-from rocket_controller.iteration_type import LedgerBasedIteration
 from rocket_controller.strategies.byzzql_agent import ByzzQLAgent
 from rocket_controller.strategies.strategy import Strategy
 
@@ -51,7 +50,6 @@ class ByzzQLStrategy(Strategy):
         auto_parse_identical: bool = True,
         auto_parse_subsets: bool = True,
         keep_action_log: bool = True,
-        iteration_type=LedgerBasedIteration(10, 10, 65),
         log_dir: str | None = None,
         network_overrides=None,
         strategy_overrides=None,
@@ -63,7 +61,7 @@ class ByzzQLStrategy(Strategy):
             auto_parse_identical,
             auto_parse_subsets,
             keep_action_log,
-            iteration_type,
+            None,
             log_dir,
             network_overrides,
             strategy_overrides,
@@ -73,14 +71,18 @@ class ByzzQLStrategy(Strategy):
         self.dispatch_thread = threading.Thread(target=self.dispatch_loop, daemon=True)
 
         # Initialize RL Agent and State Abstraction
-        self.state = MessageInboxAbstraction(
-            log_dir=self.iteration_type.get_log_dir() or "missing_dir",
-            strategy=self,
-        )
-        # self.state = TraceAbstraction(
-        #     log_dir=self.iteration_type.get_log_dir() or "missing_dir",
-        #     strategy=self,
-        # )
+        if self.params["abstraction"] == "MessageInbox":
+            self.state = MessageInboxAbstraction(
+                log_dir=self.iteration_type.get_log_dir() or "missing_dir",
+                strategy=self,
+            )
+        elif self.params["abstraction"] == "Trace":
+            self.state = TraceAbstraction(
+                log_dir=self.iteration_type.get_log_dir() or "missing_dir",
+                strategy=self,
+            )
+        else:
+            raise ValueError(f"Invalid abstraction type: {self.params['abstraction']}")
 
         # Uncomment to silence the debug printouts
         # logger.remove()
@@ -165,7 +167,7 @@ class ByzzQLStrategy(Strategy):
         logger.debug(
             f"Queued packet from {packet.from_port} to {packet.to_port}, queue size: {queue_size}"
         )
-        event.wait()
+        event.wait(timeout=30.0)
 
         end_time = time.time()
         delay_ms = (end_time - start_time) * 1000

@@ -4,10 +4,13 @@ import traceback
 from subprocess import PIPE, Popen, TimeoutExpired
 from sys import platform
 from threading import Thread
+from typing import List
 
 import docker
 from docker import DockerClient
 from loguru import logger
+
+from rocket_controller.validator_node_info import ValidatorNode
 
 
 class InterceptorManager:
@@ -24,17 +27,17 @@ class InterceptorManager:
         """Continuously log the stdout and stderr of the subprocess."""
         try:
             while running_flag() and proc.poll() is None:
-                output = proc.stdout.readline()
+                output = "\n".join(proc.stdout.readlines())
                 if output:
                     logger.debug(f"[Interceptor stdout] {output.strip()}")
-                error = proc.stderr.readline()
+                error = "\n".join(proc.stderr.readlines())
                 if error:
                     logger.info(f"[Interceptor stderr] {error.strip()}")
         except Exception as e:
             logger.error(f"Error while reading subprocess output: {e}")
 
     @staticmethod
-    def cleanup_docker_containers():
+    def cleanup_docker_containers(validators: List[ValidatorNode]):
         """Stop the validator containers."""
         docker_client: DockerClient = docker.from_env()
         for c in docker_client.containers.list():
@@ -57,7 +60,7 @@ class InterceptorManager:
                 stdout=PIPE,
                 stderr=PIPE,
                 text=True,
-                bufsize=1
+                bufsize=1,
             )
             self.running = True
         except FileNotFoundError as exc:
@@ -67,7 +70,11 @@ class InterceptorManager:
             traceback.print_exception(exc)
             exit(2)
 
-        self.output_thread = Thread(target=self.__check_output, args=[self.process, lambda: self.running], daemon=True)
+        self.output_thread = Thread(
+            target=self.__check_output,
+            args=[self.process, lambda: self.running],
+            daemon=True,
+        )
         self.output_thread.start()
 
     def restart(self):

@@ -20,15 +20,16 @@ message PacketAck {
 }
 
 message ValidatorNodeInfo {
-    uint32 peer_port = 1;
-    uint32 ws_public_port = 2;
-    uint32 ws_admin_port = 3;
-    uint32 rpc_port = 4;
-    string status = 5;
-    string validation_key = 6;
-    string validation_private_key = 7;
-    string validation_public_key = 8;
-    string validation_seed = 9;
+    string name = 1;
+    uint32 peer_port = 2;
+    uint32 ws_public_port = 3;
+    uint32 ws_admin_port = 4;
+    uint32 rpc_port = 5;
+    string status = 6;
+    string validation_key = 7;
+    string validation_private_key = 8;
+    string validation_public_key = 9;
+    string validation_seed = 10;
 }
 
 message ValidatorNodeInfoAck {
@@ -42,11 +43,12 @@ message Partition {
 }
 
 message Config {
-    uint32 base_port_peer = 1;
-    uint32 base_port_ws = 2;
-    uint32 base_port_ws_admin = 3;
-    uint32 base_port_rpc = 4;
-    uint32 number_of_nodes = 5;
-    repeated Partition net_partitions = 6;
-    repeated Partition unl_partitions = 7;
+    string prefix = 1;
+    uint32 base_port_peer = 2;
+    uint32 base_port_ws = 3;
+    uint32 base_port_ws_admin = 4;
+    uint32 base_port_rpc = 5;
+    uint32 number_of_nodes = 6;
+    repeated Partition net_partitions = 7;
+    repeated Partition unl_partitions = 8;
 }

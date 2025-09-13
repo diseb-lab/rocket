@@ -87,7 +87,11 @@ class Strategy(ABC):
 
         self.start_datetime: datetime = datetime.now()
         self.iteration_type = (
-            LedgerBasedIteration(10, 4, 45)
+            LedgerBasedIteration(
+                self.params.get("iterations", 10),
+                self.params.get("max_ledger_seq", 10),
+                self.params.get("timeout", 65),
+            )
             if iteration_type is None
             else iteration_type
         )
@@ -205,7 +209,7 @@ class Strategy(ABC):
                     peer_from_id, peer_to_id, packet.data, final_data, action
                 )
 
-        self.update_status(packet) 
+        self.update_status(packet)
         return final_data, action, send_amount
 
     @abstractmethod

@@ -1,5 +1,11 @@
+abstraction: "MessageInbox"
+
 target_inbox: 30
 overflow_factor: 1.2
 underflow_factor: 0.8
 sensitivity_ratio: 1.2
 max_events: 300
+
+iterations: 3
+max_ledger_seq: 3
+timeout: 65

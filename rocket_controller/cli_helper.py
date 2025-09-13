@@ -76,7 +76,7 @@ def parse_args() -> argparse.Namespace:
         "If set, overrides the encoding specified in the strategy configuration file.",
         metavar="ENCODING",
     )
-    parser.add_argument( 
+    parser.add_argument(
         "--overrides",
         type=check_valid_strategy_overrides,
         default=None,
@@ -194,6 +194,7 @@ def check_valid_strategy_overrides(overrides_str: str) -> Dict[str, str]:
         result[separated_items[0]] = separated_items[1]
     return result
 
+
 def check_valid_encoding(encoding: str) -> List[int]:
     try:
         parsed_array = ast.literal_eval(encoding)
@@ -203,9 +204,10 @@ def check_valid_encoding(encoding: str) -> List[int]:
     except ValueError as e:
         raise argparse.ArgumentTypeError(f"not a valid encoding: {encoding!r}") from e
 
+
 def process_args(args: argparse.Namespace) -> Dict[str, Any]:
     """
-    Parses the command line arguments. 
+    Parses the command line arguments.
 
     Args:
         args: The command line arguments.
@@ -240,7 +242,6 @@ def process_args(args: argparse.Namespace) -> Dict[str, Any]:
         strategy_overrides["corrupt_probability"] = args.corrupt_probability
     if args.overrides and len(args.overrides.keys()) > 0:
         strategy_overrides += args.overrides
-
 
     if args.network_config:
         params_dict["network_config_path"] = args.network_config
